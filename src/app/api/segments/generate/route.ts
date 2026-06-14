@@ -111,7 +111,7 @@ Example Output: SELECT DISTINCT c.* FROM "Customer" c JOIN "Order" o ON c.id = o
           visits: 24,
         }
       ],
-      criteria: prompt,
+      criteria: "Fallback Data (Rate Limit Exceeded)",
     });
   }
 }
