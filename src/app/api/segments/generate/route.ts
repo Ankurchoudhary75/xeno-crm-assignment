@@ -28,9 +28,10 @@ Example Output: SELECT DISTINCT c.* FROM "Customer" c JOIN "Order" o ON c.id = o
 
     // Vercel Hobby has a 10s hard timeout which returns an uncatchable HTML 500 error.
     // We race the Gemini call against an 8s timeout to guarantee we hit our safe catch block fallback.
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("Vercel Function Timeout Prevented")), 8000)
-    );
+    let timeoutId: NodeJS.Timeout;
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error("Vercel Function Timeout Prevented")), 8000);
+    });
 
     const aiPromise = ai.models.generateContent({
       model: "gemini-2.5-flash",
@@ -43,7 +44,15 @@ Example Output: SELECT DISTINCT c.* FROM "Customer" c JOIN "Order" o ON c.id = o
       },
     });
 
-    const response = await Promise.race([aiPromise, timeoutPromise]);
+    // Prevent unhandled rejection if timeout wins
+    aiPromise.catch(() => {});
+
+    let response;
+    try {
+      response = await Promise.race([aiPromise, timeoutPromise]);
+    } finally {
+      clearTimeout(timeoutId!);
+    }
 
     let sql = response.text?.trim() || "";
     // Remove markdown code blocks if AI still included them
