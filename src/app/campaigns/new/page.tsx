@@ -34,6 +34,7 @@ export default function NewCampaign() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          campaignName: name,
           segmentName: selectedSegment?.name,
           segmentCriteria: selectedSegment?.criteria,
           channel,

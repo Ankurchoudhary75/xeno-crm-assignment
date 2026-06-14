@@ -3,7 +3,7 @@ import { ai } from "@/lib/ai";
 
 export async function POST(req: Request) {
   try {
-    const { segmentName, segmentCriteria, channel, brandContext } =
+    const { campaignName, segmentName, segmentCriteria, channel, brandContext } =
       await req.json();
 
     if (!process.env.GEMINI_API_KEY) {
@@ -12,11 +12,12 @@ export async function POST(req: Request) {
       });
     }
 
-    const systemPrompt = `You are an expert copywriter for a retail/DTC brand.
-Write a highly engaging, personalized marketing message for the following audience segment.
+    const systemPrompt = `You are an expert copywriter for a premium retail/SaaS brand.
+Write a highly engaging, personalized marketing message for the following campaign and audience segment.
 Keep it short and appropriate for the requested channel. Do not include subject lines or quotes around the message.
 
-Brand Context: ${brandContext || "A premium coffee chain."}
+Brand Context: ${brandContext || "XenoCRM Luxury Retail"}
+Campaign Goal: ${campaignName}
 Channel: ${channel}
 Audience Name: ${segmentName}
 Audience Criteria: ${segmentCriteria}`;
