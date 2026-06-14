@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
 
 export async function POST() {
   try {
@@ -10,11 +10,33 @@ export async function POST() {
     await prisma.order.deleteMany();
     await prisma.customer.deleteMany();
 
-    const names = ['Alice Smith', 'Bob Jones', 'Charlie Brown', 'Diana Prince', 'Eve Adams', 'Frank Castle', 'Grace Hopper', 'Hank Pym', 'Ivy Pepper', 'Jack Reacher'];
-    const cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami', 'New York', 'Seattle', 'Boston', 'New York', 'Denver'];
+    const names = [
+      "Alice Smith",
+      "Bob Jones",
+      "Charlie Brown",
+      "Diana Prince",
+      "Eve Adams",
+      "Frank Castle",
+      "Grace Hopper",
+      "Hank Pym",
+      "Ivy Pepper",
+      "Jack Reacher",
+    ];
+    const cities = [
+      "New York",
+      "Los Angeles",
+      "Chicago",
+      "Houston",
+      "Miami",
+      "New York",
+      "Seattle",
+      "Boston",
+      "New York",
+      "Denver",
+    ];
     const customersData = names.map((name, i) => ({
       name,
-      email: `${name.split(' ')[0].toLowerCase()}@example.com`,
+      email: `${name.split(" ")[0].toLowerCase()}@example.com`,
       phone: `+1555000000${i}`,
       city: cities[i],
     }));
@@ -34,7 +56,7 @@ export async function POST() {
         // Random date in the last 60 days
         const date = new Date();
         date.setDate(date.getDate() - Math.floor(Math.random() * 60));
-        
+
         ordersData.push({
           customerId: customer.id,
           amount: parseFloat((Math.random() * 150 + 20).toFixed(2)), // $20 to $170 per order
@@ -47,9 +69,16 @@ export async function POST() {
       await prisma.order.create({ data: order });
     }
 
-    return NextResponse.json({ message: 'Database seeded successfully', customers: createdCustomers.length, orders: ordersData.length });
+    return NextResponse.json({
+      message: "Database seeded successfully",
+      customers: createdCustomers.length,
+      orders: ordersData.length,
+    });
   } catch (error) {
-    console.error('Failed to seed database:', error);
-    return NextResponse.json({ error: 'Failed to seed database' }, { status: 500 });
+    console.error("Failed to seed database:", error);
+    return NextResponse.json(
+      { error: "Failed to seed database" },
+      { status: 500 },
+    );
   }
 }

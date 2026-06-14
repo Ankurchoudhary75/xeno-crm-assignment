@@ -2,12 +2,18 @@
 
 import { useEffect, useState } from "react";
 
-export default function AnimatedCounter({ value, duration = 600 }: { value: number, duration?: number }) {
+export default function AnimatedCounter({
+  value,
+  duration = 600,
+}: {
+  value: number;
+  duration?: number;
+}) {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
     if (value === 0) return;
-    
+
     let startTimestamp: number;
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;

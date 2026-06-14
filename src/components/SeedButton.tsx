@@ -14,7 +14,9 @@ export default function SeedButton() {
       const res = await fetch("/api/seed", { method: "POST" });
       const data = await res.json();
       if (res.ok) {
-        setMessage(`Success: Created ${data.customers} customers and ${data.orders} orders.`);
+        setMessage(
+          `Success: Created ${data.customers} customers and ${data.orders} orders.`,
+        );
       } else {
         setMessage(`Error: ${data.error}`);
       }
@@ -27,15 +29,22 @@ export default function SeedButton() {
 
   return (
     <div>
-      <button 
-        onClick={handleSeed} 
-        disabled={loading} 
+      <button
+        onClick={handleSeed}
+        disabled={loading}
         className="btn-secondary flex items-center gap-2"
       >
         <Database size={16} />
         {loading ? "Seeding..." : "Seed Mock Data"}
       </button>
-      {message && <p className="mt-4 text-emerald-500" style={{ fontSize: '13px', color: 'var(--accent-emerald)' }}>{message}</p>}
+      {message && (
+        <p
+          className="mt-4 text-emerald-500"
+          style={{ fontSize: "13px", color: "var(--accent-emerald)" }}
+        >
+          {message}
+        </p>
+      )}
     </div>
   );
 }

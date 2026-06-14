@@ -20,9 +20,7 @@ export default function RootLayout({
           <Sidebar />
           <div className="main-area">
             <Topbar />
-            <main className="content-area page-transition">
-              {children}
-            </main>
+            <main className="content-area page-transition">{children}</main>
           </div>
         </div>
       </body>
