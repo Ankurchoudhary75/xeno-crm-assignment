@@ -38,10 +38,18 @@ export default function AudiencePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt }),
       });
-      const data = await res.json();
+      
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseError) {
+        data = { error: `Server failed to return JSON. Status: ${res.status} ${res.statusText}. The server might have timed out.` };
+      }
+      
       setResults(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      setResults({ error: error.message || "A network error occurred." });
     } finally {
       setLoading(false);
     }
