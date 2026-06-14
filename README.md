@@ -2,8 +2,6 @@
 
 A premium, AI-powered customer relationship management suite designed to demonstrate a true "AI-native" workflow, from audience segmentation to asynchronous campaign delivery.
 
-![Dashboard Preview](./public/window.svg)
-
 ## Features
 
 - **Luxury SaaS Aesthetic**: A completely custom, dark-mode UI with fluid animations, glowing accents, and proportional data visualizations.
