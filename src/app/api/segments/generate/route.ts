@@ -26,7 +26,13 @@ Return ONLY a valid SQL query starting with SELECT. Do not wrap in markdown code
 Example Request: Users who spent over $50
 Example Output: SELECT DISTINCT c.* FROM "Customer" c JOIN "Order" o ON c.id = o."customerId" GROUP BY c.id HAVING SUM(o.amount) > 50`;
 
-    const response = await ai.models.generateContent({
+    // Vercel Hobby has a 10s hard timeout which returns an uncatchable HTML 500 error.
+    // We race the Gemini call against an 8s timeout to guarantee we hit our safe catch block fallback.
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Vercel Function Timeout Prevented")), 8000)
+    );
+
+    const aiPromise = ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: [
         { role: "user", parts: [{ text: systemPrompt }] },
@@ -36,6 +42,8 @@ Example Output: SELECT DISTINCT c.* FROM "Customer" c JOIN "Order" o ON c.id = o
         temperature: 0.1,
       },
     });
+
+    const response = await Promise.race([aiPromise, timeoutPromise]);
 
     let sql = response.text?.trim() || "";
     // Remove markdown code blocks if AI still included them
