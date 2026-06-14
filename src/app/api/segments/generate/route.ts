@@ -18,13 +18,13 @@ export async function POST(req: Request) {
 
     const systemPrompt = `You are an AI assistant for a CRM database. 
 Your task is to convert a user's natural language request into a valid PostgreSQL query to fetch matching customers.
-The database has these tables (NOTE: You MUST wrap all table names in double quotes because PostgreSQL is case-sensitive):
-"Customer"(id, name, email, phone, city, createdAt)
-"Order"(id, customerId, amount, createdAt)
+The database has these tables (NOTE: You MUST wrap all table names AND camelCase column names in double quotes because PostgreSQL is case-sensitive):
+"Customer"(id, name, email, phone, city, "createdAt")
+"Order"(id, "customerId", amount, "createdAt")
 
 Return ONLY a valid SQL query starting with SELECT. Do not wrap in markdown code blocks. 
 Example Request: Users who spent over $50
-Example Output: SELECT DISTINCT c.* FROM "Customer" c JOIN "Order" o ON c.id = o.customerId GROUP BY c.id HAVING SUM(o.amount) > 50`;
+Example Output: SELECT DISTINCT c.* FROM "Customer" c JOIN "Order" o ON c.id = o."customerId" GROUP BY c.id HAVING SUM(o.amount) > 50`;
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
