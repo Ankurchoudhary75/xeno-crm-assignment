@@ -45,23 +45,28 @@ export async function POST(req: Request) {
       where: { campaignId: campaign.id },
     });
 
-    // Send to channel service stub asynchronously without awaiting
-    const channelServiceUrl =
-      process.env.CHANNEL_SERVICE_URL ||
-      "http://localhost:3000/api/channel/send";
+    // Resolve the absolute URL dynamically for Vercel or localhost
+    const getBaseUrl = () => {
+      if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+      if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+      return "http://localhost:3000";
+    };
+    const channelServiceUrl = `${getBaseUrl()}/api/channel/send`;
 
-    // In serverless, you shouldn't use fire-and-forget loops like this because the function might terminate.
-    // However, for this demo/local assignment, it's sufficient.
-    comms.forEach((c) => {
-      fetch(channelServiceUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          communicationId: c.id,
-          channel: channel,
-          message: message,
-        }),
-      }).catch((err) => console.error("Failed to call channel service:", err));
+    // In serverless, we must use after() to ensure background tasks aren't killed
+    const { after } = require("next/server");
+    after(() => {
+      comms.forEach((c) => {
+        fetch(channelServiceUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            communicationId: c.id,
+            channel: channel,
+            message: message,
+          }),
+        }).catch((err) => console.error("Failed to call channel service:", err));
+      });
     });
 
     return NextResponse.json(campaign);

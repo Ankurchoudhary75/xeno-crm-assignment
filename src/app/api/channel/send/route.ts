@@ -13,10 +13,11 @@ export async function POST(req: Request) {
       { status: 202 },
     );
 
-    // Simulate async delivery lifecycle in the background
-    // Since this is a demo, we'll run it without awaiting.
-    // In serverless, this might get killed, but works locally on Node.
-    simulateLifecycle(communicationId);
+    // In serverless, we must use after() so this 10-second simulation isn't killed!
+    const { after } = require("next/server");
+    after(() => {
+      simulateLifecycle(communicationId);
+    });
 
     return response;
   } catch (error) {
@@ -51,7 +52,13 @@ async function simulateLifecycle(communicationId: string) {
 
 async function sendReceipt(communicationId: string, status: string) {
   try {
-    await fetch(CRM_RECEIPT_URL, {
+    const getBaseUrl = () => {
+      if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+      if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+      return "http://localhost:3000";
+    };
+    
+    await fetch(`${getBaseUrl()}/api/crm/receipt`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ communicationId, status }),
