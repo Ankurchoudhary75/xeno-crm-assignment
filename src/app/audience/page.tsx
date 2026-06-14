@@ -143,7 +143,21 @@ export default function AudiencePage() {
             </form>
           </div>
 
-          {results && (
+          {results?.error && (
+            <div className="card-inner flex-col gap-4 page-transition" style={{ border: "1px solid var(--accent-rose)", background: "rgba(244,63,94,0.05)" }}>
+              <div className="flex items-center gap-2">
+                <AlertCircle size={14} color="var(--accent-rose)" />
+                <span style={{ fontSize: "13px", color: "var(--accent-rose)", fontWeight: 500 }}>
+                  API Error
+                </span>
+              </div>
+              <code style={{ fontSize: "11px", color: "var(--accent-rose)", whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
+                {results.error}
+              </code>
+            </div>
+          )}
+
+          {results && !results.error && (
             <div className="card-inner flex-col gap-4 page-transition">
               <div className="flex justify-between items-center">
                 <span
