@@ -15,7 +15,9 @@ export default function AudiencePage() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<any>(null);
   const [name, setName] = useState("");
-  const [segments, setSegments] = useState<{ id: string; name: string }[]>([]);
+  const [segments, setSegments] = useState<
+    { id: string; name: string; criteria?: string; sql?: string }[]
+  >([]);
 
   useEffect(() => {
     fetchSegments();

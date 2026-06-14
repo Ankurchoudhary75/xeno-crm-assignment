@@ -8,7 +8,9 @@ import confetti from "canvas-confetti";
 
 export default function NewCampaign() {
   const router = useRouter();
-  const [segments, setSegments] = useState<{ id: string; name: string }[]>([]);
+  const [segments, setSegments] = useState<
+    { id: string; name: string; criteria?: string; sql?: string }[]
+  >([]);
   const [name, setName] = useState("");
   const [segmentId, setSegmentId] = useState("");
   const [channel, setChannel] = useState("WHATSAPP");
