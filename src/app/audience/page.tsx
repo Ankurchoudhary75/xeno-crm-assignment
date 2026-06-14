@@ -8,6 +8,7 @@ import {
   Search,
   MoreHorizontal,
   User,
+  AlertCircle,
 } from "lucide-react";
 
 export default function AudiencePage() {
