@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-function timeAgo(dateString: string) {
-  const date = new Date(dateString);
+function timeAgo(dateInput: Date | string) {
+  const date = new Date(dateInput);
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
   if (seconds < 60) return `${Math.max(0, seconds)}s ago`;
   if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
@@ -19,6 +19,7 @@ export default function ActivityFeed({
     id: string;
     status: string;
     updatedAt: Date;
+    createdAt?: Date;
     customer: { name: string };
     campaign: { name: string };
   }[];
