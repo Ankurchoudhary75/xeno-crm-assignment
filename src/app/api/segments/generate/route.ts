@@ -59,6 +59,22 @@ Example Output: SELECT DISTINCT c.* FROM "Customer" c JOIN "Order" o ON c.id = o
     return NextResponse.json({ sql, customers, criteria: prompt });
   } catch (error: any) {
     console.error("Generate segment error:", error);
+
+    // If Gemini throws a Free Tier Rate Limit error during the interview demo,
+    // gracefully fall back to a mock query so the presentation doesn't crash!
+    if (
+      error.message?.toLowerCase().includes("rate limit") ||
+      error.message?.includes("429") ||
+      error.message?.toLowerCase().includes("quota")
+    ) {
+      const mockCustomers = await prisma.customer.findMany({ take: 3 });
+      return NextResponse.json({
+        sql: "-- [FALLBACK DUE TO GEMINI RATE LIMIT]\nSELECT * FROM \"Customer\" LIMIT 3",
+        customers: mockCustomers,
+        criteria: prompt,
+      });
+    }
+
     return NextResponse.json(
       { error: error.message || "Failed to generate segment" },
       { status: 500 },
